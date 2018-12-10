@@ -19,11 +19,12 @@
 			    	<h3 class="panel-title">Sign in</h3>
 			 	</div>
 			  	<div class="panel-body">
-			    	<form accept-charset="UTF-8" role="form">
+			    	<form accept-charset="UTF-8" role="form" method="post">
+                        {% csrf_token %}
                     <fieldset>
-			    	  	<div class="form-group">
+			    	  	<!-- <div class="form-group">
 			    		    <input id= "preferredCity" class="form-control" placeholder="Preferred City" name="preferredCity" type="text">
-			    		</div>
+			    		</div> -->
 			    	    <button class="btn btn-lg btn-success btn-block"> <a href={% autoescape off %}{{ auth_url }}{% endautoescape %}>Log In With Spotify</a></button>
 
                     </fieldset>

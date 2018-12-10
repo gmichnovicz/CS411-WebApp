@@ -215,15 +215,17 @@ def locationdropdown(location):
     locStr += """ </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <form class="px-4 py-3"  method="post">
-                {% csrf_token %} 
+                """
+    locStr2= """
                     <div class="form-group">
                         <input id="autocomplete" name = "autocomplete" placeholder="Enter new location" type="text" />
-                        <input type="submit" value="Search" class="postfix button"/>
 
                     </div>    
+                    <button type="submit" id="find-show" class="btn btn-lg btn-success btn-block">Set Location</button>
+
                 </form>
             </div>
         </li>
     """
 
-    return locStr
+    return locStr,locStr2

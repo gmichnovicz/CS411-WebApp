@@ -12,8 +12,10 @@
                 <div class="carousel-item col-md-3  active">
                    <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href= {{topURL1}} title="image 1" class="thumb">
-                          <img class="img-fluid mx-auto d-block" src= {% if artist1img %}{{artist1img}}{% endif %} alt="slide 1">
+                        <a href= {% if artisturls.0 %}{{artisturls.0}}{% endif %} title="image 1" class="thumb">
+                          <!-- <img class="img-fluid mx-auto d-block" src= {% if artist1img %}{{artist1img}}{% endif %} alt="slide 1"> -->
+                          <img class="img-fluid mx-auto d-block" src= {% if artistimgs.0 %}{{artistimgs.0}}{% endif %} alt="slide 1">
+
                         </a>
                       </div>
                     </div>
@@ -21,8 +23,8 @@
                 <div class="carousel-item col-md-3 ">
                    <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL12} title="image 3" class="thumb">
-                         <img class="img-fluid mx-auto d-block" src={% if artist2img %}{{artist2img}}{% endif %} alt="slide 2">
+                        <a href={% if artisturls.1 %}{{artisturls.1}}{% endif %} title="image 3" class="thumb">
+                         <img class="img-fluid mx-auto d-block" src={% if artistimgs.1 %}{{artistimgs.1}}{% endif %} alt="slide 2">
                         </a>
                       </div>
                     </div>
@@ -30,8 +32,8 @@
                 <div class="carousel-item col-md-3 ">
                    <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL3}} title="image 4" class="thumb">
-                         <img class="img-fluid mx-auto d-block" src={% if artist3img %}{{artist3img}}{% endif %} alt="slide 3">
+                        <a href={% if artisturls.2 %}{{artisturls.2}}{% endif %} title="image 4" class="thumb">
+                         <img class="img-fluid mx-auto d-block" src={% if artistimgs.2 %}{{artistimgs.2}}{% endif %} alt="slide 3">
                         </a>
                       </div>
                     </div>
@@ -39,8 +41,8 @@
                 <div class="carousel-item col-md-3 ">
                     <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL4}} title="image 5" class="thumb">
-                         <img class="img-fluid mx-auto d-block" src={% if artist4img %}{{artist4img}}{% endif %} alt="slide 4">
+                        <a href={% if artisturls.3 %}{{artisturls.3}}{% endif %} title="image 5" class="thumb">
+                         <img class="img-fluid mx-auto d-block" src={% if artistimgs.3 %}{{artistimgs.3}}{% endif %} alt="slide 4">
                         </a>
                       </div>
                     </div>
@@ -48,8 +50,8 @@
                 <div class="carousel-item col-md-3 ">
                   <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL5}} title="image 6" class="thumb">
-                          <img class="img-fluid mx-auto d-block" src={% if artist5img %}{{artist5img}}{% endif %} alt="slide 5">
+                        <a href={% if artisturls.4 %}{{artisturls.4}}{% endif %} title="image 6" class="thumb">
+                          <img class="img-fluid mx-auto d-block" src={% if artistimgs.4 %}{{artistimgs.4}}{% endif %} alt="slide 5">
                         </a>
                       </div>
                     </div>
@@ -57,8 +59,8 @@
                 <div class="carousel-item col-md-3 ">
                    <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL6}} title="image 7" class="thumb">
-                          <img class="img-fluid mx-auto d-block" src={% if artist6img %}{{artist6img}}{% endif %} alt="slide 6">
+                        <a href={% if artisturls.5 %}{{artisturls.5}}{% endif %} title="image 7" class="thumb">
+                          <img class="img-fluid mx-auto d-block" src={% if artistimgs.5 %}{{artistimgs.5}}{% endif %} alt="slide 6">
                         </a>
                       </div>
                     </div>
@@ -66,8 +68,8 @@
                 <div class="carousel-item col-md-3 ">
                    <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL7}} title="image 8" class="thumb">
-                          <img class="img-fluid mx-auto d-block" src={% if artist7img %}{{artist7img}}{% endif %} alt="slide 7">
+                        <a href={% if artisturls.6 %}{{artisturls.6}}{% endif %} title="image 8" class="thumb">
+                          <img class="img-fluid mx-auto d-block" src={% if artistimgs.6 %}{{artistimgs.6}}{% endif %} alt="slide 7">
                         </a>
                       </div>
                     </div>
@@ -75,8 +77,8 @@
                  <div class="carousel-item col-md-3  ">
                     <div class="panel panel-default">
                       <div class="panel-thumbnail">
-                        <a href={{topURL8}} title="image 2" class="thumb">
-                         <img class="img-fluid mx-auto d-block" src={% if artist8img %}{{artist8img}}{% endif %} alt="slide 8">
+                        <a href={% if artisturls.7 %}{{artisturls.7}}{% endif %} title="image 2" class="thumb">
+                         <img class="img-fluid mx-auto d-block" src={% if artistimgs.7 %}{{artistimgs.7}}{% endif %} alt="slide 8">
                         </a>
                       </div>
                       

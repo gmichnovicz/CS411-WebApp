@@ -24,10 +24,10 @@ client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_I
 
 def home_view(request):
     if not request.user.is_authenticated:
-        request.session['HomePayload']['location'] = request.user.location
         return redirect('/login/')
 
     if request.method=='POST':
+
         try:
             location = request.POST.get('autocomplete')
             newLoc='+'.join(location.split(',')[-3].split())
@@ -37,6 +37,7 @@ def home_view(request):
 
         access_token = request.session['access_token']
         artistNames,artistUrls,artistExtLinks, genres = services.getArtists(access_token) #gets top 8 artists in spotify
+
         try:
             MySimilarArtistEvents,SimArtistsImgs,SimFoundNames = services.getTicketMaster(genres,newLoc) #gets the ticketmaster suggested artists
             divs = services.renderRecs(SimArtistsImgs,SimFoundNames)
@@ -44,32 +45,18 @@ def home_view(request):
         except: 
             divs = '<h2 class="my-4 text-center text-lg-left" style=padding-right: 20px;">No shows found given your location/genre preferences.</h1>'
         
-        # request.session['Concerts']=MySimilarArtistEvents
-        locStr = services.locationdropdown(location.split(',')[-3].strip())
+        
+        
+        locStr, locStr2 = services.locationdropdown(location.split(',')[-3].strip())
 
-
-        payload = {   
-            'artist1img':artistUrls[0],
-            'artist2img':artistUrls[1],
-            'artist3img':artistUrls[2],
-            'artist4img':artistUrls[3],
-            'artist5img':artistUrls[4],
-            'artist6img':artistUrls[5],
-            'artist7img':artistUrls[6],
-            'artist8img':artistUrls[7],
-
-            'topURL1':artistExtLinks[0],
-            'topURL2':artistExtLinks[1],
-            'topURL3':artistExtLinks[2],
-            'topURL4':artistExtLinks[3],
-            'topURL5':artistExtLinks[4],
-            'topURL6':artistExtLinks[5],
-            'topURL7':artistExtLinks[6],
-            'topURL8':artistExtLinks[7],
+        payload = {       
+            'artistimgs': artistUrls,
+            'artisturls':artistExtLinks,
             'user':request.user.username,
             'location':location.split(',')[-3].strip(),
             'divs':divs,
-            'locationdropdown':locStr
+            'locationdropdown1':locStr,
+            'locationdropdown2':locStr2
         }
         del request.session['HomePayload']
         request.session['HomePayload'] = payload
@@ -84,29 +71,14 @@ def home_view(request):
         except:
             divs = '<h2 class="my-4 text-center text-lg-left">No shows found given your location/genre preferences.</h1>'
 
-        locStr = services.locationdropdown(request.user.location)
-        # request.session['Concerts']=MySimilarArtistEvents
+        locStr, locStr2 = services.locationdropdown(request.user.location)
         payload = {   
-            'artist1img':artistUrls[0],
-            'artist2img':artistUrls[1],
-            'artist3img':artistUrls[2],
-            'artist4img':artistUrls[3],
-            'artist5img':artistUrls[4],
-            'artist6img':artistUrls[5],
-            'artist7img':artistUrls[6],
-            'artist8img':artistUrls[7],
-
-            'topURL1':artistExtLinks[0],
-            'topURL2':artistExtLinks[1],
-            'topURL3':artistExtLinks[2],
-            'topURL4':artistExtLinks[3],
-            'topURL5':artistExtLinks[4],
-            'topURL6':artistExtLinks[5],
-            'topURL7':artistExtLinks[6],
-            'topURL8':artistExtLinks[7],
+            'artistimgs': artistUrls,
+            'artisturls':artistExtLinks,
             'user':request.user.username,
             'location':request.user.location,
-            'locationdropdown':locStr,
+            'locationdropdown1':locStr,
+            'locationdropdown2':locStr2,
             'divs':divs
         }
         request.session['HomePayload'] = payload
@@ -124,6 +96,8 @@ def login_view(request):
     payload = {'auth_url':auth_url}
     access_token = "" 
     code = sp_oauth.parse_response_code(request.get_full_path())
+    if request.method == 'POST':
+        request.session['PrefLoc'] = location = request.POST.get('preferredCity')
 
     if code:
         token_info = sp_oauth.get_access_token(code)
@@ -155,10 +129,13 @@ def set_location_view(request):
     if (request.method == 'POST'):
         # so they pressed submit on their location
         location = request.POST.get('autocomplete')
+        print(location)
         user = CustomUser.objects.get(username=request.user.username,spotifyid=request.user.spotifyid)
         user.location = location.split(',')[-3].strip()
         user.save()
-        return redirect('/home/')
+        request.session['PrefLoc'] = location
+        # return redirect('/home/')
+        return redirect('/success/')
 
     return render(request,'setlocation.html')
 
@@ -310,8 +287,8 @@ def set_location_view(request):
 def success(request):
     # payload = {'success':request.session['user']}
     if request.user.is_authenticated:
-        return render(request,'success.html',{'success':request.user})
-    return render(request,'success.html',{'success':request.user})
+        return render(request,'success.html',{'success':request.session['PrefLoc']})
+    return render(request,'success.html',{'success':request.session['PrefLoc']})
 
 
 def showinfo(request,artist):
