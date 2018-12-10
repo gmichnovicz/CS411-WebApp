@@ -144,7 +144,6 @@ def getTicketMaster(genres,location):
     r = requests.get(url).json()
     if (r['page']['totalElements']==0):
         return None
-    print(r)
     for i in range(len(r['_embedded']['events'])): #iterate over all the 25 returned shows and parse thru the json accordingly. 
         payload = {}
 
@@ -210,10 +209,10 @@ def locationdropdown(location):
     locStr = """
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Current Location Set To:"""
+                Current Location Set To: <b>"""
     locStr += location
-    locStr += """ </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+    locStr += """ </b></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <form class="px-4 py-3"  method="post">
                 """
     locStr2= """
@@ -221,7 +220,7 @@ def locationdropdown(location):
                         <input id="autocomplete" name = "autocomplete" placeholder="Enter new location" type="text" />
 
                     </div>    
-                    <button type="submit" id="find-show" class="btn btn-lg btn-success btn-block">Set Location</button>
+                    <button type="submit" id="find-show" class="btn btn-sm btn-dark btn-block float-right">Set Location</button>
 
                 </form>
             </div>
@@ -229,3 +228,14 @@ def locationdropdown(location):
     """
 
     return locStr,locStr2
+
+
+def GetSpotifyImage(idd,bearer):
+   
+    url="https://api.spotify.com/v1/users/"+idd
+    headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Authorization: Bearer "+bearer}
+
+    r = requests.get(url,headers=headers).json()
+    print(r)
+    imgURL = r['images'][0]['url']
+    return imgURL

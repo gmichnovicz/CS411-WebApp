@@ -4,15 +4,57 @@
 {% endblock title %}
 
 {% block body %}
-<div class="container-fluid" style="height: 700px;">
 
-  <div class="jumbotron shadow p-3 mb-5 bg-light rounded">
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">Username: {{user}}</li>
-        <li class="list-group-item">Default Location: {{request.user.location}}</li>
-        <li class="list-group-item">
-        <a href={{spotifyid}}> Spotify Account </a>
-      </ul> 
-  </div>
+<div class="row" style="margin-top: 100px; margin-left: 20px;">
+    <div class="col-md-5">
+        
+        <div class="jumbotron shadow p-3 mb-5 bg-light rounded" style="text-align:center;">
+            <img src = {{IMG}} width="80%" height="320">
+        </div>
+    
+
+    </div>
+    
+    
+    
+    <div class="col-md-7">
+        
+        
+      
+        <div class="jumbotron shadow p-3 mb-5 bg-light rounded">
+            <div class="container-fluid" style="height: 700px;">
+
+                <div class="jumbotron shadow p-3 mb-5 bg-light rounded">
+                  <ul class="list-group list-group-flush">
+                      <li class="list-group-item"><b>Username: </b>{{user}}</li>
+                      <li class="list-group-item"><b>Default Location: </b>{{request.user.location}}
+                        <button class="btn btn-sm btn-light float-right" id="test" type="button">
+                            <a href="/newuser/">Change Default Location</a>
+                        </button>
+                      </li>
+                      <li class="list-group-item">
+                      <a href={{spotifyid}}> <b>Spotify Account </b></a></li>
+                    </ul> 
+                </div>
+              </div>
+        </div>
+
+
+    </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock body %}
