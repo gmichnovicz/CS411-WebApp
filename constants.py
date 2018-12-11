@@ -10,6 +10,8 @@ evenfulKey = 'PNXdHgmPgh2QF8SF'
 seatgeekClientID = 'MTQxODU4NjR8MTU0NDA1NzMwOS4wNQ'
 seatgeekClientSecret = '40acb3f5f63eabb01d8f69886fb9d145ce67300ff73aec5a81135656a0e942ed'
 
+SPOTIPY_CLIENT_ID = '78f584e7e40c41528f1601d32a27d15c'
+SPOTIPY_CLIENT_SECRET = 'b284e94507c34fc6b7f17ac0f0fbaca7'
 
 # Hip-Hop/Rap - "KnvZfZ7vAv1"
 # Dance/Electronic (EDM) - "KnvZfZ7vAvF"

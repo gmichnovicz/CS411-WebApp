@@ -71,6 +71,7 @@ def getArtists(bearer,userid):
     artistLinks=[]
     # artistNames = [a['name'] for a in artists]
     artistNames = ['+'.join(a['name'].split()) for a in artists]
+    artistNames = [a.replace('/','') for a in artistNames]
     genres = sum([a['genres'][0:2] for a in artists],[])
     artistImages= []
     for a in artists:

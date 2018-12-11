@@ -12,9 +12,9 @@ from django.core import serializers
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout , authenticate, get_user
 
+from constants import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, googlemapsAPIkey
 
-SPOTIPY_CLIENT_ID = '78f584e7e40c41528f1601d32a27d15c'
-SPOTIPY_CLIENT_SECRET = 'b284e94507c34fc6b7f17ac0f0fbaca7'
+
 SPOTIPY_REDIRECT_URI = 'http://127.0.0.1:8000/login/'
 SCOPE = 'user-top-read'
 CACHE = '.spotipyoauthcache'
@@ -27,15 +27,10 @@ def home_view(request):
         return redirect('/login/')
 
     if request.method=='POST':
-        
-        # try:
         location = request.POST.get('autocomplete')
+        
         newLoc='+'.join(location.split(',')[-3].split())
-        # except:
-        #     return render(request,'setlocation.html',{'default':'Invalid location. Please select from autocomplete.'})
-
-            # return(request,'index.html',request.session['HomePayload'])
-
+        
         access_token = request.session['access_token']
         artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
         request.session['ProfileImg'] = imgURL
@@ -49,8 +44,7 @@ def home_view(request):
         
         
         locStr, locStr2 = services.locationdropdown(location)#location.split(',')[-3].strip())
-        print(locStr)
-        print(locStr2)
+        
         payload = {       
             'artistimgs': artistUrls,
             'artisturls':artistExtLinks,
@@ -58,13 +52,13 @@ def home_view(request):
             'location':location.split(',')[-3].strip(),
             'divs':divs,
             'locationdropdown1':locStr,
-            'locationdropdown2':locStr2
+            'locationdropdown2':locStr2,
+            'googleKEY': googlemapsAPIkey
         }
         del request.session['HomePayload']
         request.session['HomePayload'] = payload
 
     elif 'HomePayload' not in request.session:
-        
         access_token = request.session['access_token']
         artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
         request.session['ProfileImg'] = imgURL
@@ -85,26 +79,35 @@ def home_view(request):
             'location':request.user.location,
             'locationdropdown1':locStr,
             'locationdropdown2':locStr2,
-            'divs':divs
+            'divs':divs,
+            'googleKEY': googlemapsAPIkey
+
         }
         request.session['HomePayload'] = payload
     else:
-        payload = request.session['HomePayload']
-    
+
+        access_token = request.session['access_token']
         try:
             location = request.session['PrefLoc']
             locStr, locStr2 = services.locationdropdown(location)
-            
-            payload['location'] = location
-            payload['locationdropdown1'] = locStr
-            payload['locationdropdown2'] = locStr2
+            try:
+                artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
+                MySimilarArtistEvents,SimArtistsImgs,SimFoundNames = services.getTicketMaster(genres,request.user.location.split(',')[-3].strip()) #gets the ticketmaster suggested artists
+                divs = services.renderRecs(SimArtistsImgs,SimFoundNames)
+                request.session['Concerts']=MySimilarArtistEvents
+            except:
+                divs = '<h2 class="my-4 text-center text-lg-left">No shows found given your location/genre preferences.</h1>'
+        
             request.session['HomePayload']['location'] = location
-            request.session['locationdropdown1'] = locStr
-            request.session['locationdropdown2'] = locStr2
+            request.session['HomePayload']['locationdropdown1'] = locStr
+            request.session['HomePayload']['locationdropdown2'] = locStr2
+            request.session['HomePayload']['location'] = location
+            request.session['HomePayload']['divs'] = divs
+            payload = request.session['HomePayload']
         except:
             pass
         
-    return render(request,'index.html',payload)
+    return render(request,'index.html',request.session['HomePayload'])
 
 def login_view(request):
 
@@ -146,23 +149,17 @@ def set_location_view(request):
     if (request.method == 'POST'):
         # so they pressed submit on their location
         location = request.POST.get('autocomplete')
-        
-        
-        
         user = CustomUser.objects.get(username=request.user.username,spotifyid=request.user.spotifyid)
         user.location = location#location.split(',')[-3].strip()
         user.save()
-        # request.session['HomePayload']['location'] = location
         request.session['PrefLoc'] = location
-        # return redirect('/home/')
+        request.session['LocChangeFlag']=1
         return redirect('/home/')
-        # return render(request,'index.html',request.session['HomePayload'])
 
-    return render(request,'setlocation.html',{'default':'Enter default location.'})
+    return render(request,'setlocation.html',{'default':'Enter default location.','googleKEY':googlemapsAPIkey})
 
 
 def success(request):
-    # payload = {'success':request.session['user']}
     if request.user.is_authenticated:
         return render(request,'success.html',{'success':request.session['PrefLoc']})
     return render(request,'success.html',{'success':request.session['PrefLoc']})
@@ -178,12 +175,7 @@ def showinfo(request,artist):
     return render(request,'showinfo.html',payload)
 
 def profile(request):
-    # try:
-    #     print("trying")
-    #     img = services.GetSpotifyImage(request.user.spotifyid,request.session['access_token'])
-    # except:
-    #     img = ''
-    # print(img)
+    
     img = request.session['ProfileImg']
     curUser = request.user
     payload={'users':curUser.username,'user':curUser.username,'location':request.session['HomePayload']['location'],'spotifyid':'https://open.spotify.com/user/'+str(curUser.spotifyid),'IMG':img}
