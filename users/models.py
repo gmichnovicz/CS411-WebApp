@@ -13,3 +13,4 @@ class CustomUser(AbstractUser):
     def publish(self):
         self.added_date = timezone.now()
         self.save()
+    

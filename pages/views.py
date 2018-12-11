@@ -27,17 +27,18 @@ def home_view(request):
         return redirect('/login/')
 
     if request.method=='POST':
+        
+        # try:
+        location = request.POST.get('autocomplete')
+        newLoc='+'.join(location.split(',')[-3].split())
+        # except:
+        #     return render(request,'setlocation.html',{'default':'Invalid location. Please select from autocomplete.'})
 
-        try:
-            location = request.POST.get('autocomplete')
-            newLoc='+'.join(location.split(',')[-3].split())
-
-        except:
-            return(request,'index.html',request.session['HomePayload'])
+            # return(request,'index.html',request.session['HomePayload'])
 
         access_token = request.session['access_token']
-        artistNames,artistUrls,artistExtLinks, genres = services.getArtists(access_token) #gets top 8 artists in spotify
-
+        artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
+        request.session['ProfileImg'] = imgURL
         try:
             MySimilarArtistEvents,SimArtistsImgs,SimFoundNames = services.getTicketMaster(genres,newLoc) #gets the ticketmaster suggested artists
             divs = services.renderRecs(SimArtistsImgs,SimFoundNames)
@@ -62,8 +63,12 @@ def home_view(request):
         request.session['HomePayload'] = payload
 
     if 'HomePayload' not in request.session:
+        
         access_token = request.session['access_token']
-        artistNames,artistUrls,artistExtLinks, genres = services.getArtists(access_token) #gets top 8 artists in spotify
+        artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
+        request.session['ProfileImg'] = imgURL
+
+        
         try:
             MySimilarArtistEvents,SimArtistsImgs,SimFoundNames = services.getTicketMaster(genres,request.user.location.split(',')[-3].strip()) #gets the ticketmaster suggested artists
             divs = services.renderRecs(SimArtistsImgs,SimFoundNames)
@@ -84,7 +89,24 @@ def home_view(request):
         request.session['HomePayload'] = payload
     else:
         payload = request.session['HomePayload']
-
+    
+        try:
+            location = request.session['PrefLoc']
+            locStr, locStr2 = services.locationdropdown(location)
+            print(locStr)
+            print()
+            print(locStr2)
+            payload['location'] = location
+            payload['locationdropdown1'] = locStr
+            payload['locationdropdown2'] = locStr2
+            request.session['HomePayload']['location'] = location
+            request.session['locationdropdown1'] = locStr
+            request.session['locationdropdown2'] = locStr2
+        except:
+            print("except")
+            pass
+        
+    print(payload)
     return render(request,'index.html',payload)
 
 def login_view(request):
@@ -116,7 +138,7 @@ def login_view(request):
             newUser = CustomUser(username = user['display_name'],location = 'Boston',spotifyid=user['id'])
             newUser.save()
             login(request,newUser,backend='users.backends.SpotifyAuthBackEnd')
-            return redirect('/home/')
+            return redirect('/newuser/')
 
     else:
         return render(request,'login.html',payload)
@@ -127,15 +149,19 @@ def set_location_view(request):
     if (request.method == 'POST'):
         # so they pressed submit on their location
         location = request.POST.get('autocomplete')
-        print(location)
+        
+        
+        
         user = CustomUser.objects.get(username=request.user.username,spotifyid=request.user.spotifyid)
         user.location = location#location.split(',')[-3].strip()
         user.save()
+        # request.session['HomePayload']['location'] = location
         request.session['PrefLoc'] = location
         # return redirect('/home/')
         return redirect('/home/')
+        # return render(request,'index.html',request.session['HomePayload'])
 
-    return render(request,'setlocation.html')
+    return render(request,'setlocation.html',{'default':'Enter default location.'})
 
 
 def success(request):
@@ -155,12 +181,13 @@ def showinfo(request,artist):
     return render(request,'showinfo.html',payload)
 
 def profile(request):
-    try:
-        print("trying")
-        img = services.GetSpotifyImage(request.user.spotifyid,request.session['access_token'])
-    except:
-        img = ''
-    print(img)
+    # try:
+    #     print("trying")
+    #     img = services.GetSpotifyImage(request.user.spotifyid,request.session['access_token'])
+    # except:
+    #     img = ''
+    # print(img)
+    img = request.session['ProfileImg']
     curUser = request.user
     payload={'users':curUser.username,'user':curUser.username,'location':request.session['HomePayload']['location'],'spotifyid':'https://open.spotify.com/user/'+str(curUser.spotifyid),'IMG':img}
     return render(request,'profile.html',payload)

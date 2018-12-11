@@ -23,11 +23,11 @@
              </div>
               <div class="panel-body">
                
-                  <form accept-charset="UTF-8" role="form" method="post">
+                  <form accept-charset="UTF-8" role="form" method="post" id="change-city-form">
                       {% csrf_token %}
                   <fieldset>
                   <div class="form-group">
-                      <label for="autocomplete">Enter preferred location:</label>
+                      <label for="autocomplete">{{default}}</label>
                       <input type ="text" class="form-control autocomplete-address" id="autocomplete" name = "autocomplete" placeholder="Enter new location" type="text" />                  </div>
                   
                   </div>

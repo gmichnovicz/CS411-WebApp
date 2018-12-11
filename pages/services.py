@@ -61,7 +61,7 @@ def getEventBrite(artist,location):
 
     
 
-def getArtists(bearer):
+def getArtists(bearer,userid):
     #gets users top 8 artists from spotify api, bearer represents access_token from oauth, and returns their image urls.
     url = "https://api.spotify.com/v1/me/top/artists"
     headers = {'content-type': 'application/json', 'Accept': 'application/json',"Authorization":"Authorization: Bearer "+bearer}
@@ -84,8 +84,16 @@ def getArtists(bearer):
         # skURL='https://api.songkick.com/api/3.0/search/artists.json?apikey=zTrWUEWdDa8iaH8v&query='+artistNames[i]
         # rSK = requests.get(skURL)
         
-        artistLinks.append(artists[i]['external_urls']['spotify'])    
-    return artistNames[0:8],artistImages[0:8],artistLinks,genres
+        artistLinks.append(artists[i]['external_urls']['spotify'])
+
+    url="https://api.spotify.com/v1/users/"+userid
+    headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Authorization: Bearer "+bearer}
+    r = requests.get(url,headers=headers).json()
+    try:
+        imgURL = r['images'][0]['url']
+    except:
+        imgURL = ''
+    return artistNames[0:8],artistImages[0:8],artistLinks,genres,imgURL
 
 def similarArtists(artistIds,bearer):
     #not used now
