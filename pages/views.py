@@ -49,7 +49,8 @@ def home_view(request):
         
         
         locStr, locStr2 = services.locationdropdown(location)#location.split(',')[-3].strip())
-
+        print(locStr)
+        print(locStr2)
         payload = {       
             'artistimgs': artistUrls,
             'artisturls':artistExtLinks,
@@ -62,7 +63,7 @@ def home_view(request):
         del request.session['HomePayload']
         request.session['HomePayload'] = payload
 
-    if 'HomePayload' not in request.session:
+    elif 'HomePayload' not in request.session:
         
         access_token = request.session['access_token']
         artistNames,artistUrls,artistExtLinks, genres, imgURL = services.getArtists(access_token,request.user.spotifyid) #gets top 8 artists in spotify
@@ -93,9 +94,7 @@ def home_view(request):
         try:
             location = request.session['PrefLoc']
             locStr, locStr2 = services.locationdropdown(location)
-            print(locStr)
-            print()
-            print(locStr2)
+            
             payload['location'] = location
             payload['locationdropdown1'] = locStr
             payload['locationdropdown2'] = locStr2
@@ -103,10 +102,8 @@ def home_view(request):
             request.session['locationdropdown1'] = locStr
             request.session['locationdropdown2'] = locStr2
         except:
-            print("except")
             pass
         
-    print(payload)
     return render(request,'index.html',payload)
 
 def login_view(request):
